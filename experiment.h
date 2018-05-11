@@ -27,6 +27,20 @@ class.
 
 #pragma once
 
+#include <cassert>
+#include <iostream>
+#include <random>
+#include <vector>
+
+using std::cin;
+using std::cout;
+using std::endl;
+using std::flush;
+using std::max;
+using std::ostream;
+using std::setw;
+using std::vector;
+
 template <class Container, class Counting>
 class experiment {
   typedef Container::value_type value_type;
@@ -48,8 +62,7 @@ public:
 
     cin >> S;
 
-    while (S--)
-      __long_random(10);
+    std::mt19937 generator (S);
 
     ofstream ofs1("read.dat");
     ofstream ofs2("graph.dat");
@@ -77,58 +90,58 @@ public:
       ofs2 << setw(4) << N0 << flush;
 
       for (int i = 0; i < N; ++i)
-	x.push_back(i);
+        x.push_back(i);
 
       int p, q;
 
       for (n = 0; n < number_of_algorithms; ++n)
-	stats[n].reset();
+        stats[n].reset();
 
       for (p = 0; p < number_of_trials; ++p) {
 
-	counting<Container, Counting>::permute(x);
-	y = x;
-	value_type::assignments = 0;
+        counting<Container, Counting>::permute(x);
+        y = x;
+        value_type::assignments = 0;
 
-	cout << p+1 << ":" << flush;
+        cout << p+1 << ":" << flush;
 
-	for (n = 0; n < number_of_algorithms; ++n) {
-	  timer1.restart();
-	  for (q = 0; q < repetitions; ++q) {
-	    x = y;
-	    value_type::assignments -= N;
-	    counting<Container, Counting>::algorithm(n, x);
-	  }
-	  timer1.stop();
+        for (n = 0; n < number_of_algorithms; ++n) {
+          timer1.restart();
+          for (q = 0; q < repetitions; ++q) {
+            x = y;
+            value_type::assignments -= N;
+            counting<Container, Counting>::algorithm(n, x);
+          }
+          timer1.stop();
 
-	  for (int z = 0; z < N; ++z)
-	    assert(x[z] == z);
+          for (int z = 0; z < N; ++z)
+            assert(x[z] == z);
 
-	  if (p == -1) {
-	    distance::report(cout);
-	    distance::report(ofs1);
-	  }
-	  cout << n+1 << flush;
-	  stats[n].record(timer1);
-	}
-	cout << ", " << flush;
+          if (p == -1) {
+            distance::report(cout);
+            distance::report(ofs1);
+          }
+          cout << n+1 << flush;
+          stats[n].record(timer1);
+        }
+        cout << ", " << flush;
       }
 
       cout << endl <<
-	" Algorithm           Time    Comps   Assmts     Iters     Dists      Total  ";
+        " Algorithm           Time    Comps   Assmts     Iters     Dists      Total  ";
       cout << endl;
       ofs1 << endl <<
-	" Algorithm           Time    Comps   Assmts     Iters     Dists      Total  ";
+        " Algorithm           Time    Comps   Assmts     Iters     Dists      Total  ";
       ofs1 << endl;
 
       for (n = 0; n < number_of_algorithms; ++n) {
-	cout << counting<Container, Counting>::headings[n];
-	stats[n].report(cout, repetitions);
-	cout << endl;
-	ofs1 << counting<Container, Counting>::headings[n];
-	stats[n].report(ofs1, repetitions);
-	ofs1 << endl;
-	stats[n].report(ofs2, repetitions);
+        cout << counting<Container, Counting>::headings[n];
+        stats[n].report(cout, repetitions);
+        cout << endl;
+        ofs1 << counting<Container, Counting>::headings[n];
+        stats[n].report(ofs1, repetitions);
+        ofs1 << endl;
+        stats[n].report(ofs2, repetitions);
       }
 
       cout << endl;
@@ -138,7 +151,7 @@ public:
       x.erase(x.begin(), x.end());
 
       if (repetitions > 1)
-	repetitions /= 2;
+        repetitions /= 2;
     }
   }
 };

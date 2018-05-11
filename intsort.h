@@ -26,7 +26,11 @@ first place.
 
 #pragma once
 
-#include <algo.h>
+#include <algorithm>
+
+#include "recorder.h"
+
+#define __stl_threshold 16
 
 template <class Size>
 Size __lg(Size n) {

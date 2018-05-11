@@ -23,6 +23,11 @@ operations, using values of type Counting.
 
 #pragma once
 
+#include <iostream>
+
+using std::endl;
+using std::ostream;
+
 template <class T, class Counting>
 class counter {
 protected:

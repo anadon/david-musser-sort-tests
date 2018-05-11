@@ -21,8 +21,10 @@ using the standard clock function from time.h.
 
 #pragma once
 
-#include <vector.h>
-#include <time.h>
+#include <chrono>
+#include <vector>
+
+using std::vector;
 
 class timer {
 protected:
@@ -33,7 +35,7 @@ public:
     times.push_back(time());
   }
   void reset_vectors() {
-    times.erase(times.begin(), times.end());
+    times.clear();
   }
   void restart() { start = clock(); }
   void stop() { finish = clock(); }

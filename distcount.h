@@ -27,6 +27,13 @@ is its distance type.
  *
  */
 
+#include <iostream>
+#include <utility>
+
+using std::endl;
+using std::ostream;
+using std::pair;
+
 template <class RandomAccessIterator, class Distance, class Counting>
 class distance_counter {
     typedef distance_counter<RandomAccessIterator, Distance, Counting>
@@ -106,7 +113,7 @@ public:
     distance_counter(const Distance& x) : current(x), generation(0) {
      ++conversions;
     }
-    operator int() const { ++coversions; return current; }
+    operator int() const { ++conversions; return current; }
     distance_counter(const self& c) : current(c.current),
       generation(c.generation + 1) {
       ++copy_constructions;
@@ -116,9 +123,9 @@ public:
     }
     Distance base() const {return current; }
     self& operator=(const self& x) {
-      ++assignments;
-      current = x.current;
-      return *this;
+        ++assignments;
+        current = x.current;
+        return *this;
     }
     self& operator++() {
         ++increments;

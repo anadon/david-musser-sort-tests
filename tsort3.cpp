@@ -1,4 +1,4 @@
-/* 
+/*
 
 Example program for measuring the computing time of algorithms.
 This program both measures times and counts operations; for
@@ -19,20 +19,28 @@ a simpler example of only measuring times, see tsort1.cpp.
  *
  */
 
-#include <assert.h>
-#include <algo.h>
-#include <vector.h>
-#include <deque.h>
-#include <random.cpp>
-#include <iostream.h>
-#include <iomanip.h>
-#include <fstream.h>
+#include <algorithm>
+#include <cassert>
+#include <deque>
+#include <iostream>
+#include <iomanip>
+#include <iterator>
+#include <fstream>
+#include <random>
+#include <utility>
+#include <vector>
+
 #include "intsort.h"
 #include "timer.h"
 #include "recorder.h"
 #include "counter.h"
 #include "itercount.h"
 #include "distcount.h"
+
+using std::iterator;
+using std::partial_sort;
+using std::sort;
+using std::pair;
 
 const int number_of_algorithms = 3;
 const int number_of_trials = 7;
@@ -57,14 +65,14 @@ public:
   static void algorithm(int k, Container& x)
   {
     switch (k) {
-    case 0: introsort(iterator(x.begin()), 
+    case 0: introsort(iterator(x.begin()),
                       iterator(x.end()));
       break;
-    case 1: sort(iterator(x.begin()), 
+    case 1: sort(iterator(x.begin()),
                  iterator(x.end()));
       break;
-    case 2: partial_sort(iterator(x.begin()), 
-                         iterator(x.end()), 
+    case 2: partial_sort(iterator(x.begin()),
+                         iterator(x.end()),
                          iterator(x.end()));
     break;
     }
@@ -84,5 +92,3 @@ int main()
 {
   experiment<vector<counter<int, double> >, double>::run();
 }
-
-

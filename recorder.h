@@ -24,7 +24,16 @@ recording computing times.
 
 #pragma once
 
-#include <vector.h>
+#include <iostream>
+#include <vector>
+
+using std::cout;
+using std::ios;
+using std::ostream;
+using std::ofstream;
+using std::setw;
+using std::setprecision;
+using std::vector;
 
 template <class Container>
 Container::value_type median(Container& c)

@@ -27,9 +27,17 @@ used for the counts.
 
 #pragma once
 
+#include <iostream>
+#include <iterator>
+
+using std::endl;
+using std::iterator_traits;
+using std::ostream;
+using std::random_access_iterator_tag;
+
 template <class RandomAccessIterator, class T, class Reference,
           class Distance, class DistanceBase, class Counting>
-class iteration_counter : public random_access_iterator<T, Distance> {
+class iteration_counter : public iterator_traits<RandomAccessIterator > {
     typedef iteration_counter<RandomAccessIterator,
                               T, Reference, Distance,
                               DistanceBase, Counting>
