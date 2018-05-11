@@ -1,4 +1,4 @@
-/* 
+/*
 
 Defines class iteration_counter<RandomAccessIterator, T, Reference,
 Distance, DistanceBase, Counting>, for use in measuring the
@@ -25,8 +25,7 @@ used for the counts.
  *
  */
 
-#ifndef ITERCOUNT_H
-#define ITERCOUNT_H
+#pragma once
 
 template <class RandomAccessIterator, class T, class Reference,
           class Distance, class DistanceBase, class Counting>
@@ -128,7 +127,7 @@ public:
         return self(current + n);
     }
     self& operator+=(const Distance& n) {
-        ++bigjumps; 
+        ++bigjumps;
         current += n;
         return *this;
     }
@@ -278,5 +277,3 @@ template <class RandomAccessIterator, class T,
 Counting iteration_counter<RandomAccessIterator, T, Reference,
                            Distance, DistanceBase, Counting>::
   max_generation = 0;
-
-#endif

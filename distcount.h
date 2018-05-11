@@ -12,8 +12,7 @@ is its distance type.
 
 */
 
-#ifndef DISTCOUNT_H
-#define DISTCOUNT_H
+#pragma once
 
 /*
  * Copyright (c) 1997 Rensselaer Polytechnic Institute
@@ -393,5 +392,3 @@ pair<T*,distance_counter<RandomAccessIterator, Distance, Counting> >
                             distance_counter<RandomAccessIterator,
                                              Distance, Counting>(tmp.second));
 }
-
-#endif

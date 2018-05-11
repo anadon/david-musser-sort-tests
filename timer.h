@@ -19,8 +19,7 @@ using the standard clock function from time.h.
  *
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#pragma once
 
 #include <vector.h>
 #include <time.h>
@@ -40,5 +39,3 @@ public:
   void stop() { finish = clock(); }
   double time() const { return ((double)(finish - start))/CLOCKS_PER_SEC; }
 };
-
-#endif

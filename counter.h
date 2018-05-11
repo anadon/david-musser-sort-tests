@@ -1,4 +1,4 @@
-/* 
+/*
 
 Defines class counter<T, Counting>, for use in measuring
 the performance of certain STL generic algorithms.  Objects of this
@@ -21,8 +21,7 @@ operations, using values of type Counting.
  *
  */
 
-#ifndef COUNTER_H
-#define COUNTER_H
+#pragma once
 
 template <class T, class Counting>
 class counter {
@@ -44,7 +43,7 @@ public:
 
   static Counting total() {
     return assignments + less_comparisons + equal_comparisons + accesses; }
-  
+
   static void reset() {
     assignments = 0;
     less_comparisons = 0;
@@ -53,15 +52,15 @@ public:
   }
 
   static void report(ostream& o) {
-    o << "Counter report:" << endl 
+    o << "Counter report:" << endl
       << "  Accesses:  "    << accesses << endl
       << "  Assignments:  " << assignments << endl
       << "  Less comps:   " << less_comparisons << endl
       << "  Equality comps:" << equal_comparisons << endl;
   }
 
-  friend bool operator<(const counter<T, Counting>& x, 
-                        const counter<T, Counting>& y) 
+  friend bool operator<(const counter<T, Counting>& x,
+                        const counter<T, Counting>& y)
   {
     ++counter<T, Counting>::less_comparisons;
     return x.value < y.value;
@@ -94,6 +93,3 @@ Counting counter<T, Counting>::equal_comparisons = 0;
 
 template <class T, class Counting>
 Counting counter<T, Counting>::accesses = 0;
-
-#endif
-

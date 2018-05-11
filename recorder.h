@@ -22,8 +22,7 @@ recording computing times.
  *
  */
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#pragma once
 
 #include <vector.h>
 
@@ -78,5 +77,3 @@ public:
     times.erase(times.begin(), times.end());
   }
 };
-
-#endif

@@ -24,8 +24,7 @@ first place.
  *
  */
 
-#ifndef INTROSORT_H
-#define INTROSORT_H
+#pragma once
 
 #include <algo.h>
 
@@ -85,5 +84,3 @@ inline void introsort(RandomAccessIterator first, RandomAccessIterator last,
                      comp);
     __final_insertion_sort(first, last, comp);
 }
-
-#endif
