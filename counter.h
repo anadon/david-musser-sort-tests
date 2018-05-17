@@ -1,10 +1,10 @@
 /*
 
-Defines class counter<T, Counting>, for use in measuring
+Defines class counter<T, ssize_t>, for use in measuring
 the performance of certain STL generic algorithms.  Objects of this
 class behave like those of type T with respect to assignments
 and comparison operations, but the class also keeps counts of those
-operations, using values of type Counting.
+operations, using values of type ssize_t.
 
 */
 
@@ -28,31 +28,29 @@ operations, using values of type Counting.
 using std::endl;
 using std::ostream;
 
-template <class T, class Counting>
+template <class T>
 class counter {
 protected:
   T value;
 public:
-  static Counting assignments;
-  static Counting less_comparisons;
-  static Counting equal_comparisons;
-  static Counting accesses;
+  static ssize_t assignments;
+  static ssize_t comparisons;
+  static ssize_t accesses;
 
   T base() const {++accesses; return value;}
 
   counter() : value(T()) { ++assignments; }
 
-  counter(const T& v) : value(v) { ++assignments; }
+  explicit counter(const T& v) : value(v) { ++assignments; }
 
-  counter(const counter<T, Counting>& x) : value(x.value) { ++assignments; }
+  counter(const counter<T>& x) : value(x.value) { ++assignments; }
 
-  static Counting total() {
-    return assignments + less_comparisons + equal_comparisons + accesses; }
+  static ssize_t total() {
+    return assignments + comparisons + accesses; }
 
   static void reset() {
     assignments = 0;
-    less_comparisons = 0;
-    equal_comparisons = 0;
+    comparisons = 0;
     accesses = 0;
   }
 
@@ -60,41 +58,45 @@ public:
     o << "Counter report:" << endl
       << "  Accesses:  "    << accesses << endl
       << "  Assignments:  " << assignments << endl
-      << "  Less comps:   " << less_comparisons << endl
-      << "  Equality comps:" << equal_comparisons << endl;
+      << "  comparisons:   " << comparisons << endl;
   }
 
-  friend bool operator<(const counter<T, Counting>& x,
-                        const counter<T, Counting>& y)
+  friend bool operator<(const counter<T>& x,
+                        const counter<T>& y)
   {
-    ++counter<T, Counting>::less_comparisons;
+    ++counter<T>::comparisons;
     return x.value < y.value;
   }
 
-  friend ostream& operator<<(ostream& o, const counter<T, Counting>& x) {
+  friend ostream& operator<<(ostream& o, const counter<T>& x) {
     return o << x.value;
   }
 
-  counter<T, Counting>& operator=(const counter<T, Counting>& x) {
+  counter<T>& operator=(const counter<T>& x) {
     ++assignments;
     value = x.value;
     return *this;
   }
 
-  bool operator==(const counter<T, Counting>& x) const {
-    ++equal_comparisons;
+  bool operator==(const counter<T>& x) const {
+    ++comparisons;
     return value == x.value;
+  }
+
+  bool operator!=(const counter<T>& x) const {
+    return !(value == x.value);
+  }
+
+  T operator* () const {
+    return base();
   }
 };
 
-template <class T, class Counting>
-Counting counter<T, Counting>::assignments = 0;
+template <class T>
+ssize_t counter<T>::assignments = 0;
 
-template <class T, class Counting>
-Counting counter<T, Counting>::less_comparisons = 0;
+template <class T>
+ssize_t counter<T>::comparisons = 0;
 
-template <class T, class Counting>
-Counting counter<T, Counting>::equal_comparisons = 0;
-
-template <class T, class Counting>
-Counting counter<T, Counting>::accesses = 0;
+template <class T>
+ssize_t counter<T>::accesses = 0;

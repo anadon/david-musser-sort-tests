@@ -32,59 +32,60 @@ first place.
 
 #define __stl_threshold 16
 
-template <class Size>
+template <
+  typename Size>
 Size __lg(Size n) {
     Size k;
-    for (k = 0; n != 1; n = n / 2) ++k;
+    for (k = Size(0); n != Size(1); n = n / Size(2)) ++k;
     return k;
 }
-
-template <class RandomAccessIterator, class T, class Size>
-void __introsort_loop(RandomAccessIterator first,
-                      RandomAccessIterator last, T*,
-                      Size depth_limit) {
-    while (last - first > __stl_threshold) {
-      if (depth_limit == 0) {
-	partial_sort(first, last, last);
-	return;
-      }
-      --depth_limit;
-      RandomAccessIterator cut = __unguarded_partition
-	(first, last, T(__median(*first, *(first + (last - first)/2),
-				 *(last - 1))));
-     __introsort_loop(cut, last, value_type(first), depth_limit);
-     last = cut;
-    }
+/*
+template <class _RandomAccessIterator>
+_RandomAccessIterator
+unguarded_partition_pivot(_RandomAccessIterator __first,
+            _RandomAccessIterator __last)
+{
+  _RandomAccessIterator __mid = __first + (__last - __first) / 2;
+  std::__move_median_to_first(__first, __mid, (__last - 1));
+  return std::__unguarded_partition(__first + 1, __last, *__first);
 }
-
-template <class RandomAccessIterator, class T, class Size, class Compare>
-void __introsort_loop(RandomAccessIterator first,
- 		      RandomAccessIterator last, T*,
-		      Size depth_limit, Compare comp) {
+//*/
+template <class RandomAccessIterator, class Size, class Compare>
+void
+introsort_loop(
+  RandomAccessIterator first,
+  RandomAccessIterator last,
+  Size depth_limit,
+  Compare comp
+){
   while (last - first > __stl_threshold) {
     if (depth_limit == 0) {
       partial_sort(first, last, last, comp);
       return;
     }
-    --depth_limit;
-    RandomAccessIterator cut = __unguarded_partition
-      (first, last, T(__median(*first, *(first + (last - first)/2),
-			       *(last - 1), comp)), comp);
-    __introsort_loop(cut, last, value_type(first), depth_limit, comp);
+    RandomAccessIterator cut = std::__unguarded_partition_pivot(first, last, comp);
+    introsort_loop(cut, last, depth_limit-1, comp);
     last = cut;
   }
 }
 
-template <class RandomAccessIterator>
-inline void introsort(RandomAccessIterator first, RandomAccessIterator last) {
-    __introsort_loop(first, last, value_type(first), __lg(last - first) * 2);
-    __final_insertion_sort(first, last);
+template <
+  typename RandomAccessIterator,
+  typename Compare>
+inline
+void
+introsort(
+  RandomAccessIterator first,
+  RandomAccessIterator last,
+  Compare comp
+){
+    introsort_loop(first, last, __lg(last - first) * 2, comp);
+    __final_insertion_sort(first, last, comp);
 }
 
-template <class RandomAccessIterator, class Compare>
-inline void introsort(RandomAccessIterator first, RandomAccessIterator last,
-	  Compare comp) {
-    __introsort_loop(first, last, value_type(first), __lg(last - first) * 2,
-                     comp);
-    __final_insertion_sort(first, last, comp);
+template <
+  typename RandomAccessIterator>
+inline void introsort(RandomAccessIterator first, RandomAccessIterator last)
+{
+    introsort(first, last, __gnu_cxx::__ops::__iter_less_iter());
 }

@@ -28,119 +28,177 @@ class.
 #pragma once
 
 #include <cassert>
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <random>
 #include <vector>
+
+#include "counting.h"
+#include "counter.h"
+#include "itercount.h"
+#include "recorder.h"
+#include "timer.h"
 
 using std::cin;
 using std::cout;
 using std::endl;
 using std::flush;
 using std::max;
+using std::ofstream;
 using std::ostream;
 using std::setw;
 using std::vector;
 
-template <class Container, class Counting>
+template <typename I, typename D, template <typename> class T, template<typename, typename...> class Container>
 class experiment {
-  typedef Container::value_type value_type;
-  typedef counting<Container, Counting>::iterator iterator;
-  typedef counting<Container, Counting>::distance distance;
+  typedef T<I> value_type;
+  typedef typename counting<Container<value_type > >::iterator iterator;
+  typedef typename counting<Container<value_type > >::distance distance;
 public:
-  static void run()
-  {
-    int N0, N1, N2, N, S;
+
+  static
+  void
+  run(
+  ){
 
     const int factor = 1000;
 
     cout << "All sequence sizes are in multiples of " << factor << ".\n";
-    cout << "Input the smallest and largest sequence sizes: " << flush;
-
-    cin >> N1 >> N2;
-
+    cout << "Input the smallest sequence size: " << flush;
+    int N1;
+    cin >> N1;
+    cout << "Input the largest sequence sizes: " << flush;
+    int N2;
+    cin >> N2;
+/*
     cout << "Input random seed control (a positive integer): ";
 
     cin >> S;
 
     std::mt19937 generator (S);
+    //*/
 
     ofstream ofs1("read.dat");
     ofstream ofs2("graph.dat");
 
-    vector<recorder<value_type, iterator, distance, timer, Counting> >
-      stats(number_of_algorithms);
-
-    Container x, y;
-
-    timer timer1;
+    vector<recorder<value_type, iterator, distance> > stats(2);
 
     int repetitions = max(32/N1, 1);
 
-    int n;
+    cout << std::endl;
+    ofs1 << std::endl;
 
-    cout << endl;
-    ofs1 << endl;
+    for (int N0 = N1; N0 <= N2; N0 *= 2) {
 
-    for (N0 = N1; N0 <= N2; N0 *= 2) {
-
-      N = N0 * factor;
+      int N = N0 * factor;
 
       cout << "Size: " << setw(4) << N0 << "   Trials: " << flush;
       ofs1 << "Size: " << setw(4) << N0 << flush;
       ofs2 << setw(4) << N0 << flush;
 
+      Container<value_type> x;
       for (int i = 0; i < N; ++i)
-        x.push_back(i);
+        x.push_back(T(i));
 
       int p, q;
 
-      for (n = 0; n < number_of_algorithms; ++n)
-        stats[n].reset();
+      for (auto n = stats.begin(); n != stats.end(); ++n)
+        n->reset();
 
       for (p = 0; p < number_of_trials; ++p) {
-
-        counting<Container, Counting>::permute(x);
-        y = x;
-        value_type::assignments = 0;
+        std::random_shuffle(x.begin(), x.end());
+        Container<value_type> y(x);
+        Container<value_type>::value_type::assignments = 0;
 
         cout << p+1 << ":" << flush;
 
-        for (n = 0; n < number_of_algorithms; ++n) {
-          timer1.restart();
+        for (size_t n = 0; n < stats.size(); ++n) {
+          timer stop_watch = timer();
+          stop_watch.start();
           for (q = 0; q < repetitions; ++q) {
             x = y;
-            value_type::assignments -= N;
-            counting<Container, Counting>::algorithm(n, x);
+            Container<value_type>::value_type::assignments -= N;
+            counting<Container<value_type> >::algorithm(n, x);
           }
-          timer1.stop();
+          stop_watch.stop();
+          stats[n].record(stop_watch.lap_time());
 
           for (int z = 0; z < N; ++z)
-            assert(x[z] == z);
+            assert(x[z] == T(z));
 
           if (p == -1) {
             distance::report(cout);
             distance::report(ofs1);
           }
           cout << n+1 << flush;
-          stats[n].record(timer1);
         }
         cout << ", " << flush;
       }
 
-      cout << endl <<
-        " Algorithm           Time    Comps   Assmts     Iters     Dists      Total  ";
-      cout << endl;
-      ofs1 << endl <<
-        " Algorithm           Time    Comps   Assmts     Iters     Dists      Total  ";
-      ofs1 << endl;
+      int width = 30;
 
-      for (n = 0; n < number_of_algorithms; ++n) {
-        cout << counting<Container, Counting>::headings[n];
+      cout << endl
+        << setw(width) << "Algorithm"
+        << setw(width) << "Time"
+        << setw(width) << "data assignments"
+        << setw(width) << "data comparisons"
+        << setw(width) << "data accesses"
+        << setw(width) << "distance constructions"
+        << setw(width) << "distance copy constructions"
+        << setw(width) << "distance conversions"
+        << setw(width) << "distance assignments"
+        << setw(width) << "distance increments"
+        << setw(width) << "distance additions"
+        << setw(width) << "distance subtractions"
+        << setw(width) << "distance multiplications"
+        << setw(width) << "distance divisions"
+        << setw(width) << "distance comparisons"
+        << setw(width) << "distance max generation"
+        << setw(width) << "iterater constructions"
+        << setw(width) << "iterater assignments"
+        << setw(width) << "iterater increments"
+        << setw(width) << "iterater dereferences"
+        << setw(width) << "iterater bigjumps"
+        << setw(width) << "iterater comparisons"
+        << setw(width) << "iterater max generation"
+        << setw(width) << "total"
+        << endl;
+
+      ofs1 << endl
+        << setw(width) << "Algorithm"
+        << setw(width) << "Time"
+        << setw(width) << "data assignments"
+        << setw(width) << "data comparisons"
+        << setw(width) << "data accesses"
+        << setw(width) << "distance constructions"
+        << setw(width) << "distance copy constructions"
+        << setw(width) << "distance conversions"
+        << setw(width) << "distance assignments"
+        << setw(width) << "distance increments"
+        << setw(width) << "distance additions"
+        << setw(width) << "distance subtractions"
+        << setw(width) << "distance multiplications"
+        << setw(width) << "distance divisions"
+        << setw(width) << "distance comparisons"
+        << setw(width) << "distance max generation"
+        << setw(width) << "iterater constructions"
+        << setw(width) << "iterater assignments"
+        << setw(width) << "iterater intrements"
+        << setw(width) << "iterater dereferences"
+        << setw(width) << "iterater bigjumps"
+        << setw(width) << "iterater comparisons"
+        << setw(width) << "iterater max generation"
+        << setw(width) << "total"
+        << endl;
+
+
+
+      for (size_t n = 0; n < stats.size(); ++n) {
+        cout << setw(width) << headings[n];
         stats[n].report(cout, repetitions);
-        cout << endl;
-        ofs1 << counting<Container, Counting>::headings[n];
+        ofs1 << setw(width) << headings[n];
         stats[n].report(ofs1, repetitions);
-        ofs1 << endl;
         stats[n].report(ofs2, repetitions);
       }
 
@@ -148,7 +206,7 @@ public:
       ofs1 << endl;
       ofs2 << endl;
 
-      x.erase(x.begin(), x.end());
+      x.clear();
 
       if (repetitions > 1)
         repetitions /= 2;

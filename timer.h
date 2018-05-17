@@ -28,16 +28,20 @@ using std::vector;
 
 class timer {
 protected:
-  double start, finish;
+  double start_time, finish_time;
 public:
-  vector<double> times;
-  void record() {
-    times.push_back(time());
+  void
+  start(){
+    start_time = clock();
   }
-  void reset_vectors() {
-    times.clear();
+
+  void
+  stop(){
+    finish_time = clock();
   }
-  void restart() { start = clock(); }
-  void stop() { finish = clock(); }
-  double time() const { return ((double)(finish - start))/CLOCKS_PER_SEC; }
+
+  double
+  lap_time() const {
+    return ((double)(finish_time - start_time))/CLOCKS_PER_SEC;
+  }
 };

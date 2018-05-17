@@ -24,8 +24,11 @@ recording computing times.
 
 #pragma once
 
+#include <iomanip>
 #include <iostream>
 #include <vector>
+
+#include "counting.h"
 
 using std::cout;
 using std::ios;
@@ -35,54 +38,174 @@ using std::setw;
 using std::setprecision;
 using std::vector;
 
-template <class Container>
-Container::value_type median(Container& c)
-{
-  Container::iterator midpoint = c.begin() + (c.end() - c.begin())/2;
+template <
+  typename value_type,
+  template <typename, typename...> class Container>
+value_type
+median(
+  Container<value_type>& c
+){
+  auto midpoint = c.begin() + (c.end() - c.begin())/2;
   nth_element(c.begin(), midpoint, c.end());
   return *midpoint;
 }
 
-template <class DataCounter, class IterationCounter,
-          class DistanceCounter, class Timer, class Counting>
+template <
+  typename DataCounter,
+  typename IterationCounter,
+  typename DistanceCounter>
 class recorder
 {
-  vector<Counting> less_counts;
-  vector<Counting> assign_counts;
-  vector<Counting> iteration_counts;
-  vector<Counting> distance_counts;
+
+  vector<ssize_t> c_assignments;
+  vector<ssize_t> c_comparisons;
+  vector<ssize_t> c_accesses;
+
+  vector<ssize_t> dc_constructions;
+  vector<ssize_t> dc_copy_constructions;
+  vector<ssize_t> dc_conversions;
+  vector<ssize_t> dc_assignments;
+  vector<ssize_t> dc_increments;
+  vector<ssize_t> dc_additions;
+  vector<ssize_t> dc_subtractions;
+  vector<ssize_t> dc_multiplications;
+  vector<ssize_t> dc_divisions;
+  vector<ssize_t> dc_comparisons;
+  vector<ssize_t> dc_max_generation;
+
+  vector<ssize_t> ic_constructions;
+  vector<ssize_t> ic_assignments;
+  vector<ssize_t> ic_arithmatic;
+  vector<ssize_t> ic_dereferences;
+  vector<ssize_t> ic_bigjumps;
+  vector<ssize_t> ic_comparisons;
+  vector<ssize_t> ic_max_generation;
+
   vector<double> times;
 public:
-    void record(const Timer& t) {
-    less_counts.push_back(DataCounter::less_comparisons);
-    assign_counts.push_back(DataCounter::assignments);
-    iteration_counts.push_back(IterationCounter::total());
-    distance_counts.push_back(DistanceCounter::total());
-    times.push_back(t.time());
+
+  void
+  record(
+    const double time_taken
+  ){
+
+    c_assignments.push_back(DataCounter::assignments);
+    c_comparisons.push_back(DataCounter::comparisons);
+    c_accesses.push_back(DataCounter::accesses);
+
+    dc_constructions.push_back(DistanceCounter::constructions);
+    dc_copy_constructions.push_back(DistanceCounter::copy_constructions);
+    dc_conversions.push_back(DistanceCounter::conversions);
+    dc_assignments.push_back(DistanceCounter::assignments);
+    dc_increments.push_back(DistanceCounter::increments);
+    dc_additions.push_back(DistanceCounter::additions);
+    dc_subtractions.push_back(DistanceCounter::subtractions);
+    dc_multiplications.push_back(DistanceCounter::multiplications);
+    dc_divisions.push_back(DistanceCounter::divisions);
+    dc_comparisons.push_back(DistanceCounter::comparisons);
+    dc_max_generation.push_back(DistanceCounter::max_generation);
+
+    ic_constructions.push_back(IterationCounter::constructions);
+    ic_assignments.push_back(IterationCounter::assignments);
+    ic_arithmatic.push_back(IterationCounter::arithmatic);
+    ic_dereferences.push_back(IterationCounter::dereferences);
+    ic_bigjumps.push_back(IterationCounter::bigjumps);
+    ic_comparisons.push_back(IterationCounter::comparisons);
+    ic_max_generation.push_back(IterationCounter::max_generation);
+
+    times.push_back(time_taken);
+
     DataCounter::reset();
     IterationCounter::reset();
     DistanceCounter::reset();
   }
-  void report(ostream& o, int repeat_factor)
-  {
-    double lesses = median(less_counts)/repeat_factor/1000.0;
-    double assigns = median(assign_counts)/repeat_factor/1000.0;
-    double iters = median(iteration_counts)/repeat_factor/1000.0;
-    double dists = median(distance_counts)/repeat_factor/1000.0;
-    o << setiosflags(ios::fixed) << setprecision(3) << setw(7)
-      << median(times)/repeat_factor
-      << setprecision(1) << setw(9) << lesses
-      << setw(9) << assigns
-      << setw(10) << iters
-      << setw(10) << dists
-      << setw(11) << lesses + assigns + iters + dists
-      << "  ";
+
+  void
+  report(
+    std::ostream& o,
+    int repeat_factor
+  ){
+
+
+    ssize_t data_assignments = median(c_assignments) / repeat_factor;
+    ssize_t data_comparisons = median(c_comparisons) / repeat_factor;
+    ssize_t data_accesses = median(c_accesses) / repeat_factor;
+
+    ssize_t distance_constructions = median(dc_constructions) / repeat_factor;
+    ssize_t distance_copy_constructions = median(dc_copy_constructions) / repeat_factor;
+    ssize_t distance_conversions = median(dc_conversions) / repeat_factor;
+    ssize_t distance_assignments = median(dc_assignments) / repeat_factor;
+    ssize_t distance_increments = median(dc_increments) / repeat_factor;
+    ssize_t distance_additions = median(dc_additions) / repeat_factor;
+    ssize_t distance_subtractions = median(dc_subtractions) / repeat_factor;
+    ssize_t distance_multiplications = median(dc_multiplications) / repeat_factor;
+    ssize_t distance_divisions = median(dc_divisions) / repeat_factor;
+    ssize_t distance_comparisons = median(dc_comparisons) / repeat_factor;
+    ssize_t distance_max_generation = median(dc_max_generation) / repeat_factor;
+
+    ssize_t iterater_constructions = median(ic_constructions) / repeat_factor;
+    ssize_t iterater_assignments = median(ic_assignments) / repeat_factor;
+    ssize_t iterater_arithmatic = median(ic_arithmatic) / repeat_factor;
+    ssize_t iterater_dereferences = median(ic_dereferences) / repeat_factor;
+    ssize_t iterater_bigjumps = median(ic_bigjumps) / repeat_factor;
+    ssize_t iterater_comparisons = median(ic_comparisons) / repeat_factor;
+    ssize_t iterater_max_generation = median(ic_max_generation) / repeat_factor;
+
+    ssize_t total = data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments + iterater_arithmatic + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation + data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments + iterater_arithmatic + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation;
+
+    int width = 30;
+
+    o << setiosflags(ios::fixed) << setprecision(3)
+      << setw(width) << median(times)/repeat_factor
+      << setw(width) << data_assignments
+      << setw(width) << data_comparisons
+      << setw(width) << data_accesses
+      << setw(width) << distance_constructions
+      << setw(width) << distance_copy_constructions
+      << setw(width) << distance_conversions
+      << setw(width) << distance_assignments
+      << setw(width) << distance_increments
+      << setw(width) << distance_additions
+      << setw(width) << distance_subtractions
+      << setw(width) << distance_multiplications
+      << setw(width) << distance_divisions
+      << setw(width) << distance_comparisons
+      << setw(width) << distance_max_generation
+      << setw(width) << iterater_constructions
+      << setw(width) << iterater_assignments
+      << setw(width) << iterater_arithmatic
+      << setw(width) << iterater_dereferences
+      << setw(width) << iterater_bigjumps
+      << setw(width) << iterater_comparisons
+      << setw(width) << iterater_max_generation
+      << setw(width) << total
+      << endl;
   }
-  void reset() {
-    less_counts.erase(less_counts.begin(), less_counts.end());
-    assign_counts.erase(assign_counts.begin(), assign_counts.end());
-    iteration_counts.erase(iteration_counts.begin(), iteration_counts.end());
-    distance_counts.erase(distance_counts.begin(), distance_counts.end());
-    times.erase(times.begin(), times.end());
+
+  void
+  reset(
+  ){
+    c_assignments.clear();
+    c_comparisons.clear();
+    c_accesses.clear();
+    dc_constructions.clear();
+    dc_copy_constructions.clear();
+    dc_conversions.clear();
+    dc_assignments.clear();
+    dc_increments.clear();
+    dc_additions.clear();
+    dc_subtractions.clear();
+    dc_multiplications.clear();
+    dc_divisions.clear();
+    dc_comparisons.clear();
+    dc_max_generation.clear();
+    ic_constructions.clear();
+    ic_assignments.clear();
+    ic_arithmatic.clear();
+    ic_dereferences.clear();
+    ic_bigjumps.clear();
+    ic_comparisons.clear();
+    ic_max_generation.clear();
+    times.clear();
   }
 };
