@@ -7,6 +7,7 @@
 
 #include "distcount.h"
 #include "itercount.h"
+#include "intsort.h"
 
 const int number_of_trials = 7;
 
@@ -34,13 +35,13 @@ public:
     case 1: std::partial_sort(iterator(x.begin()),
                          iterator(x.end()),
                          iterator(x.end()));
-    break;/*
-    case 1: introsort(iterator(x.begin()),
+    break;//*
+    case 0: introsort(iterator(x.begin()),
                       iterator(x.end()));
       break;//*/
-    case 0: std::sort(iterator(x.begin()),
+    /*case 0: std::sort(iterator(x.begin()),
                       iterator(x.end()));
-      break;
+      break;//*/
     }
   }
 

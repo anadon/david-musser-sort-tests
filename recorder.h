@@ -75,7 +75,7 @@ class recorder
 
   vector<ssize_t> ic_constructions;
   vector<ssize_t> ic_assignments;
-  vector<ssize_t> ic_arithmatic;
+  vector<ssize_t> ic_increments;
   vector<ssize_t> ic_dereferences;
   vector<ssize_t> ic_bigjumps;
   vector<ssize_t> ic_comparisons;
@@ -107,7 +107,7 @@ public:
 
     ic_constructions.push_back(IterationCounter::constructions);
     ic_assignments.push_back(IterationCounter::assignments);
-    ic_arithmatic.push_back(IterationCounter::arithmatic);
+    ic_increments.push_back(IterationCounter::increments);
     ic_dereferences.push_back(IterationCounter::dereferences);
     ic_bigjumps.push_back(IterationCounter::bigjumps);
     ic_comparisons.push_back(IterationCounter::comparisons);
@@ -145,13 +145,13 @@ public:
 
     ssize_t iterater_constructions = median(ic_constructions) / repeat_factor;
     ssize_t iterater_assignments = median(ic_assignments) / repeat_factor;
-    ssize_t iterater_arithmatic = median(ic_arithmatic) / repeat_factor;
+    ssize_t iterater_aincrements = median(ic_increments) / repeat_factor;
     ssize_t iterater_dereferences = median(ic_dereferences) / repeat_factor;
     ssize_t iterater_bigjumps = median(ic_bigjumps) / repeat_factor;
     ssize_t iterater_comparisons = median(ic_comparisons) / repeat_factor;
     ssize_t iterater_max_generation = median(ic_max_generation) / repeat_factor;
 
-    ssize_t total = data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments + iterater_arithmatic + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation + data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments + iterater_arithmatic + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation;
+    ssize_t total = data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments /*+ iterater_aincrements*/ + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation + data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments /*+ iterater_aincrements*/ + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation;
 
     int width = 30;
 
@@ -173,7 +173,7 @@ public:
       << setw(width) << distance_max_generation
       << setw(width) << iterater_constructions
       << setw(width) << iterater_assignments
-      << setw(width) << iterater_arithmatic
+      << setw(width) << iterater_aincrements
       << setw(width) << iterater_dereferences
       << setw(width) << iterater_bigjumps
       << setw(width) << iterater_comparisons
@@ -201,7 +201,7 @@ public:
     dc_max_generation.clear();
     ic_constructions.clear();
     ic_assignments.clear();
-    ic_arithmatic.clear();
+    ic_increments.clear();
     ic_dereferences.clear();
     ic_bigjumps.clear();
     ic_comparisons.clear();

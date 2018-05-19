@@ -104,7 +104,7 @@ public:
 
   static ssize_t constructions;
   static ssize_t assignments;
-  static ssize_t intrements;
+  static ssize_t increments;
   static ssize_t dereferences;
   static ssize_t bigjumps;
   static ssize_t comparisons;
@@ -116,7 +116,7 @@ public:
   ){
     constructions = 0;
     assignments = 0;
-    intrements = 0;
+    increments = 0;
     dereferences = 0;
     bigjumps = 0;
     comparisons = 0;
@@ -127,7 +127,7 @@ public:
   ssize_t
   total(
   ){
-    return constructions + assignments + intrements + dereferences + bigjumps +
+    return constructions + assignments + increments + dereferences + bigjumps +
            comparisons + max_generation;
   }
 
@@ -135,7 +135,7 @@ public:
     o << "Iterator stats: \n"
       << "  Constructions:  " << constructions << "\n"
       << "  Assignments:    " << assignments   << "\n"
-      << "  Increments:     " << intrements    << "\n"
+      << "  Increments:     " << increments    << "\n"
       << "  Dereferences:   " << dereferences  << "\n"
       << "  Big jumps:      " << bigjumps      << "\n"
       << "  Differences     " << comparisons   << "\n"
@@ -181,18 +181,39 @@ public:
   self&
   operator++(
   ){
-      ++intrements;
+      ++increments;
       ++current;
       return *this;
+  }
+
+  self&
+  operator++(
+    int
+  ){
+      self copy = *this;
+      ++increments;
+      ++current;
+      return copy;
   }
 
 
   self&
   operator--(
   ){
-    ++intrements;
+    ++increments;
     --current;
     return *this;
+  }
+
+
+  self&
+  operator--(
+    int
+  ){
+    self copy = *this;
+    ++increments;
+    --current;
+    return copy;
   }
 
 
@@ -200,8 +221,8 @@ public:
   operator+(
     const Distance& n
   ) const {
-      ++bigjumps;
-      return self(current + n);
+    self self_copy(*this);
+    return self_copy += n;
   }
 
 
@@ -209,8 +230,16 @@ public:
   operator+(
     const ssize_t n
   ) const {
-      ++bigjumps;
-      return self(current + n);
+    self self_copy(*this);
+    return self_copy += Distance(n);
+  }
+
+
+  self&
+  operator+=(
+    const ssize_t& n
+  ) {
+      return (*this) += Distance(n);
   }
 
 
@@ -228,8 +257,8 @@ public:
   operator-(
     const Distance& n
   ) const {
-    ++bigjumps;
-    return self(current - n);
+    self self_copy(*this);
+    return self_copy -= n;
   }
 
 
@@ -237,8 +266,16 @@ public:
   operator-(
     const ssize_t n
   ) const {
-    ++bigjumps;
-    return self(current - n);
+    self self_copy(*this);
+    return self_copy -= Distance(n);
+  }
+
+
+  self&
+  operator-=(
+    const ssize_t n
+  ) {
+    return (*this) -= Distance(n);
   }
 
 
@@ -254,13 +291,21 @@ public:
 
   Reference
   operator[](
+    const ssize_t n
+  ){
+    return (*this)[Distance(n)];
+  }
+
+
+  Reference
+  operator[](
     const Distance& n
   ){
     dereferences++;
     return *(*this + n);
   }
 
-
+/*
   self&
   operator=(
     self& other
@@ -269,7 +314,7 @@ public:
     other.generation = generation+1;
     return other;
   }
-
+//*/
 
   friend
   ostream&
@@ -327,6 +372,48 @@ template <
   typename _T,
   typename _Reference,
   typename _Distance>
+bool
+operator<=(
+  const iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>& x,
+  const iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>& y)
+{
+   ++iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>::comparisons;
+   return x.current <= y.current;
+}
+
+template <
+  typename _RandomAccessIterator,
+  typename _T,
+  typename _Reference,
+  typename _Distance>
+bool
+operator>=(
+  const iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>& x,
+  const iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>& y)
+{
+   ++iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>::comparisons;
+   return x.current >= y.current;
+}
+
+template <
+  typename _RandomAccessIterator,
+  typename _T,
+  typename _Reference,
+  typename _Distance>
+bool
+operator>(
+  const iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>& x,
+  const iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>& y)
+{
+   ++iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>::comparisons;
+   return x.current > y.current;
+}
+
+template <
+  typename _RandomAccessIterator,
+  typename _T,
+  typename _Reference,
+  typename _Distance>
 _Distance
 operator-(
   const iteration_counter<_RandomAccessIterator, _T, _Reference, _Distance>& x,
@@ -372,7 +459,7 @@ template <
   typename T,
   typename Reference,
   typename Distance>
-ssize_t iteration_counter<RandomAccessIterator, T, Reference, Distance>::intrements = 0;
+ssize_t iteration_counter<RandomAccessIterator, T, Reference, Distance>::increments = 0;
 
 template <
   typename RandomAccessIterator,
