@@ -143,15 +143,15 @@ public:
     ssize_t distance_comparisons = median(dc_comparisons) / repeat_factor;
     ssize_t distance_max_generation = median(dc_max_generation) / repeat_factor;
 
-    ssize_t iterater_constructions = median(ic_constructions) / repeat_factor;
-    ssize_t iterater_assignments = median(ic_assignments) / repeat_factor;
-    ssize_t iterater_aincrements = median(ic_increments) / repeat_factor;
-    ssize_t iterater_dereferences = median(ic_dereferences) / repeat_factor;
-    ssize_t iterater_bigjumps = median(ic_bigjumps) / repeat_factor;
-    ssize_t iterater_comparisons = median(ic_comparisons) / repeat_factor;
-    ssize_t iterater_max_generation = median(ic_max_generation) / repeat_factor;
+    ssize_t iterator_constructions = median(ic_constructions) / repeat_factor;
+    ssize_t iterator_assignments = median(ic_assignments) / repeat_factor;
+    ssize_t iterator_aincrements = median(ic_increments) / repeat_factor;
+    ssize_t iterator_dereferences = median(ic_dereferences) / repeat_factor;
+    ssize_t iterator_bigjumps = median(ic_bigjumps) / repeat_factor;
+    ssize_t iterator_comparisons = median(ic_comparisons) / repeat_factor;
+    ssize_t iterator_max_generation = median(ic_max_generation) / repeat_factor;
 
-    ssize_t total = data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments /*+ iterater_aincrements*/ + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation + data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterater_constructions + iterater_assignments /*+ iterater_aincrements*/ + iterater_dereferences + iterater_bigjumps + iterater_comparisons + iterater_max_generation;
+    ssize_t total = data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterator_constructions + iterator_assignments /*+ iterator_aincrements*/ + iterator_dereferences + iterator_bigjumps + iterator_comparisons + iterator_max_generation + data_assignments + data_comparisons + data_accesses + distance_constructions + distance_copy_constructions + distance_conversions + distance_assignments + distance_increments + distance_additions + distance_subtractions + distance_multiplications + distance_divisions + distance_comparisons + distance_max_generation + iterator_constructions + iterator_assignments /*+ iterator_aincrements*/ + iterator_dereferences + iterator_bigjumps + iterator_comparisons + iterator_max_generation;
 
     int width = 30;
 
@@ -171,13 +171,13 @@ public:
       << setw(width) << distance_divisions
       << setw(width) << distance_comparisons
       << setw(width) << distance_max_generation
-      << setw(width) << iterater_constructions
-      << setw(width) << iterater_assignments
-      << setw(width) << iterater_aincrements
-      << setw(width) << iterater_dereferences
-      << setw(width) << iterater_bigjumps
-      << setw(width) << iterater_comparisons
-      << setw(width) << iterater_max_generation
+      << setw(width) << iterator_constructions
+      << setw(width) << iterator_assignments
+      << setw(width) << iterator_aincrements
+      << setw(width) << iterator_dereferences
+      << setw(width) << iterator_bigjumps
+      << setw(width) << iterator_comparisons
+      << setw(width) << iterator_max_generation
       << setw(width) << total
       << endl;
   }
